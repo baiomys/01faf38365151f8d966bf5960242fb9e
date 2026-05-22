@@ -30,11 +30,9 @@
   const audio = document.getElementById('bg-audio');
   const muteBtn = document.getElementById('mute-btn');
   
-  // 1. Пытаемся включить звук при любом первом клике по сайту (для обхода блоков браузера)
   const startAudio = () => {
     if (audio.paused) {
       audio.play().then(() => {
-        // Если успешно заиграло, обновляем кнопку
         muteBtn.classList.remove('muted');
         muteBtn.innerHTML = '🔊';
       }).catch(err => console.log("Автоплей заблокирован"));
@@ -43,17 +41,14 @@
   };
   document.addEventListener('click', startAudio);
 
-  // 2. Четкое и понятное управление кнопкой без двойных кликов
   muteBtn.addEventListener('click', (e) => {
-    e.stopPropagation(); // Чтобы не дублировался клик по документу
+    e.stopPropagation(); 
     
     if (audio.paused) {
-      // Если музло стоит — железно запускаем
       audio.play().catch(() => {});
       muteBtn.classList.remove('muted');
       muteBtn.innerHTML = '🔊';
     } else {
-      // Если вовсю играет — железно стопаем
       audio.pause();
       muteBtn.classList.add('muted');
       muteBtn.innerHTML = '🔇';
@@ -76,7 +71,6 @@
       line-height: 1.5;
     }
 
-    /* Кнопка отключения звука в углу */
     .sound-control {
       position: fixed;
       top: 25px;
