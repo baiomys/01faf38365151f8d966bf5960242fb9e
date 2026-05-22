@@ -27,33 +27,39 @@
 
     // Логика аудиоплеера
     window.addEventListener('DOMContentLoaded', () => {
-      const audio = document.getElementById('bg-audio');
-      const muteBtn = document.getElementById('mute-btn');
-      
-      // Попытка автоплея при первом взаимодействии с сайтом (обход ограничений браузеров)
-      const startAudio = () => {
-        if (audio.paused) {
-          audio.play().catch(err => console.log("Автоплей заблокирован браузером"));
-        }
-        document.removeEventListener('click', startAudio);
-      };
-      document.addEventListener('click', startAudio);
+  const audio = document.getElementById('bg-audio');
+  const muteBtn = document.getElementById('mute-btn');
+  
+  // 1. Пытаемся включить звук при любом первом клике по сайту (для обхода блоков браузера)
+  const startAudio = () => {
+    if (audio.paused) {
+      audio.play().then(() => {
+        // Если успешно заиграло, обновляем кнопку
+        muteBtn.classList.remove('muted');
+        muteBtn.innerHTML = '🔊';
+      }).catch(err => console.log("Автоплей заблокирован"));
+    }
+    document.removeEventListener('click', startAudio);
+  };
+  document.addEventListener('click', startAudio);
 
-      // Переключатель звука
-      muteBtn.addEventListener('click', (e) => {
-        e.stopPropagation(); // Чтобы не срабатывал клик по документу
-        if (audio.muted) {
-          audio.muted = false;
-          audio.play().catch(() => {});
-          muteBtn.classList.remove('muted');
-          muteBtn.innerHTML = '🔊';
-        } else {
-          audio.muted = true;
-          muteBtn.classList.add('muted');
-          muteBtn.innerHTML = '🔇';
-        }
-      });
-    });
+  // 2. Четкое и понятное управление кнопкой без двойных кликов
+  muteBtn.addEventListener('click', (e) => {
+    e.stopPropagation(); // Чтобы не дублировался клик по документу
+    
+    if (audio.paused) {
+      // Если музло стоит — железно запускаем
+      audio.play().catch(() => {});
+      muteBtn.classList.remove('muted');
+      muteBtn.innerHTML = '🔊';
+    } else {
+      // Если вовсю играет — железно стопаем
+      audio.pause();
+      muteBtn.classList.add('muted');
+      muteBtn.innerHTML = '🔇';
+    }
+  });
+});
   </script>
   <style>
     * {
